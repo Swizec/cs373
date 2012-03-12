@@ -142,6 +142,8 @@ class robot:
 
     def move(self, motion): # Do not change the name of this function
         alpha, d = motion
+        alpha = (alpha+random.gauss(0.0, self.steering_noise))%(pi*2)
+        d += random.gauss(0.0, self.distance_noise)
 
         beta = (d/self.length)*tan(alpha)
 
@@ -170,11 +172,11 @@ class robot:
     #           self.bearing_noise
 
 
-    def sense(self): #do not change the name of this function
+    def sense(self, use_noise=1): #do not change the name of this function
         Z = [atan2(self.y-ly, self.x-lx)+pi-self.orientation
              for ly, lx in landmarks]
-        # ENTER CODE HERE
-        # HINT: You will probably need to use the function atan2()
+        if use_noise:
+            Z = [(z+random.gauss(0.0, self.bearing_noise))%(2*pi) for z in Z]
 
         return Z #Leave this line here. Return vector Z of 4 bearings.
 
@@ -300,6 +302,7 @@ def particle_filter(motions, measurements, N=500): # I know it's tempting, but d
                 index = (index + 1) % N
             p3.append(p[index])
         p = p3
+        print get_position(p)
 
     return get_position(p)
 
@@ -335,22 +338,22 @@ measurements = [[4.746936, 3.859782, 3.045217, 2.045506],
                 [0.194460, 5.660382, 4.761072, 2.471682],
                 [5.717342, 4.736780, 3.909599, 2.342536]]
 ##
-print particle_filter(motions, measurements)
+#print particle_filter(motions, measurements)
 
 ## 2) You can generate your own test cases by generating
 ##    measurements using the generate_ground_truth function.
 ##    It will print the robot's last location when calling it.
 ##
 ##
-##number_of_iterations = 6
-##motions = [[2. * pi / 20, 12.] for row in range(number_of_iterations)]
+number_of_iterations = 6
+motions = [[2. * pi / 20, 12.] for row in range(number_of_iterations)]
 ##
-##x = generate_ground_truth(motions)
-##final_robot = x[0]
-##measurements = x[1]
-##estimated_position = particle_filter(motions, measurements)
+x = generate_ground_truth(motions)
+final_robot = x[0]
+measurements = x[1]
+estimated_position = particle_filter(motions, measurements)
 ##print_measurements(measurements)
-##print 'Ground truth:    ', final_robot
-##print 'Particle filter: ', estimated_position
-##print 'Code check:      ', check_output(final_robot, estimated_position)
+print 'Ground truth:    ', final_robot
+print 'Particle filter: ', estimated_position
+print 'Code check:      ', check_output(final_robot, estimated_position)
 
