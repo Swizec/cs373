@@ -114,6 +114,15 @@ class robot:
         return self # make sure your move function returns an instance
                       # of the robot class with the correct coordinates.
 
+    def sense(self): #do not change the name of this function
+        Z = [atan2(self.y-ly, self.x-lx)+pi-self.orientation
+             for ly, lx in landmarks]
+        # ENTER CODE HERE
+        # HINT: You will probably need to use the function atan2()
+
+        return Z #Leave this line here. Return vector Z of 4 bearings.
+
+
     ############## ONLY ADD/MODIFY CODE ABOVE HERE ####################
 
 
@@ -196,3 +205,18 @@ class robot:
 ## move function with randomized motion data.
 
 
+## 1) The following code should print the list [6.004885648174475, 3.7295952571373605, 1.9295669970654687, 0.8519663271732721]
+##
+##
+length = 20.
+bearing_noise  = 0.0
+steering_noise = 0.0
+distance_noise = 0.0
+##
+myrobot = robot(length)
+myrobot.set(30.0, 20.0, pi/5)
+myrobot.set_noise(bearing_noise, steering_noise, distance_noise)
+##
+print 'Robot:        ', myrobot
+print 'Measurements: ', myrobot.sense()
+##
