@@ -58,7 +58,7 @@ delta = [[-1, 0 ], # go up
 
 delta_name = ['^', '<', 'v', '>'] # Use these when creating your policy grid.
 
-success_prob = 0.5
+success_prob = 1.0
 failure_prob = (1.0 - success_prob)/2.0 # Probability(stepping left) = prob(stepping right) = failure_prob
 collision_cost = 100
 cost_step = 1
@@ -76,5 +76,68 @@ cost_step = 1
 def stochastic_value():
     value = [[1000 for row in range(len(grid[0]))] for col in range(len(grid))]
     policy = [[' ' for row in range(len(grid[0]))] for col in range(len(grid))]
+    lock = [[False for row in range(len(grid[0]))] for col in range(len(grid))]
+
+    next = [(goal[1], goal[0])]
+
+    value[goal[0]][goal[1]] = 0
+    policy[goal[0]][goal[1]]= '*'
+
+    def wall(pos):
+        x, y = pos
+        try:
+            if x < 0 or y < 0 or x >= len(grid[0]) or y >= len(grid) or grid[y][x] == 1:
+                return True
+            else:
+                return False
+        except IndexError:
+            return True
+
+    def _val(pos):
+        return collision_cost if wall(pos) else value[pos[1]][pos[0]]
+
+    def step(pos):
+        x, y = pos
+
+        vals = []
+
+        for i in xrange(len(delta)):
+            dy, dx = delta[i]
+
+            val = cost_step+success_prob*_val((x+dx, y+dy))
+            if dy != 0:
+                # up/down's left/right
+                val += failure_prob*_val((x-1, y))
+                val += failure_prob*_val((x+1, y))
+            else:
+                # left/right's left/right
+                val += failure_prob*_val((x, y-1))
+                val += failure_prob*_val((x, y+1))
+
+            vals.append((val, delta_name[i]))
+
+            if not wall([x+dx, y+dy]) and not lock[y+dy][x+dx]:
+                next.append((x+dx, y+dy))
+
+        val = min(vals, key=lambda v: v[0])
+
+        if [y,x] == goal:
+            return (0, '*')
+        else:
+            return val
+
+    while len(next) > 0:
+        pos = next.pop(0)
+        val, pol = step(pos)
+        if val == value[pos[1]][pos[0]]:
+            lock[pos[1]][pos[0]] = True
+        value[pos[1]][pos[0]] = val
+        policy[pos[1]][pos[0]] = pol
+
+    print value
+    print policy
+
 
     return value, policy
+
+stochastic_value()
