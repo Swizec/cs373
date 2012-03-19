@@ -43,10 +43,13 @@
 # Do NOT modify them inside your stochastic_value
 # function.
 
-grid = [[0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 1, 1, 0]]
+#grid = [[0, 0, 0, 0],
+#        [0, 0, 0, 0],
+#        [0, 0, 0, 0],
+#        [0, 1, 1, 0]]
+
+grid = [[0, 0, 0],
+        [0, 0, 0]]
 
 goal = [0, len(grid[0])-1] # Goal is in top right corner
 
@@ -58,7 +61,7 @@ delta = [[-1, 0 ], # go up
 
 delta_name = ['^', '<', 'v', '>'] # Use these when creating your policy grid.
 
-success_prob = 1.0
+success_prob = 0.5
 failure_prob = (1.0 - success_prob)/2.0 # Probability(stepping left) = prob(stepping right) = failure_prob
 collision_cost = 100
 cost_step = 1
