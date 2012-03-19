@@ -43,13 +43,13 @@
 # Do NOT modify them inside your stochastic_value
 # function.
 
-#grid = [[0, 0, 0, 0],
-#        [0, 0, 0, 0],
-#        [0, 0, 0, 0],
-#        [0, 1, 1, 0]]
+grid = [[0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 1, 1, 0]]
 
-grid = [[0, 0, 0],
-        [0, 0, 0]]
+#grid = [[0, 0, 0],
+#        [0, 0, 0]]
 
 goal = [0, len(grid[0])-1] # Goal is in top right corner
 
@@ -76,10 +76,12 @@ cost_step = 1
 # 2) ...NOT take any arguments.
 # 3) ...return two grids: FIRST value and THEN policy.
 
+import copy, math
+
 def stochastic_value():
     value = [[1000 for row in range(len(grid[0]))] for col in range(len(grid))]
     policy = [[' ' for row in range(len(grid[0]))] for col in range(len(grid))]
-    lock = [[False for row in range(len(grid[0]))] for col in range(len(grid))]
+    lock = [[0 for row in range(len(grid[0]))] for col in range(len(grid))]
 
     next = [(goal[1], goal[0])]
 
@@ -119,7 +121,7 @@ def stochastic_value():
 
             vals.append((val, delta_name[i]))
 
-            if not wall([x+dx, y+dy]) and not lock[y+dy][x+dx]:
+            if not wall([x+dx, y+dy]) and lock[y+dy][x+dx] < 1000:
                 next.append((x+dx, y+dy))
 
         val = min(vals, key=lambda v: v[0])
@@ -132,8 +134,10 @@ def stochastic_value():
     while len(next) > 0:
         pos = next.pop(0)
         val, pol = step(pos)
-        if val == value[pos[1]][pos[0]]:
-            lock[pos[1]][pos[0]] = True
+
+        if value[pos[1]][pos[0]] == val:
+            lock[pos[1]][pos[0]] += 1
+
         value[pos[1]][pos[0]] = val
         policy[pos[1]][pos[0]] = pol
 
