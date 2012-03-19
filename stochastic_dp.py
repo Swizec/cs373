@@ -81,8 +81,7 @@ import copy, math
 def stochastic_value():
     value = [[1000 for row in range(len(grid[0]))] for col in range(len(grid))]
     policy = [[' ' for row in range(len(grid[0]))] for col in range(len(grid))]
-    lock = [[0 for row in range(len(grid[0]))] for col in range(len(grid))]
-
+    closed = []
     next = [(goal[1], goal[0])]
 
     value[goal[0]][goal[1]] = 0
@@ -121,29 +120,27 @@ def stochastic_value():
 
             vals.append((val, delta_name[i]))
 
-            if not wall([x+dx, y+dy]) and lock[y+dy][x+dx] < 1000:
+            if not wall([x+dx, y+dy]) and [x+dx, y+dy] not in closed:
                 next.append((x+dx, y+dy))
 
         val = min(vals, key=lambda v: v[0])
+        closed.append([x,y])
 
         if [y,x] == goal:
             return (0, '*')
         else:
             return val
 
-    while len(next) > 0:
-        pos = next.pop(0)
-        val, pol = step(pos)
+    for i in xrange(1000):
+        closed = []
+        next = [(goal[1], goal[0])]
 
-        if value[pos[1]][pos[0]] == val:
-            lock[pos[1]][pos[0]] += 1
+        while next:
+            pos = next.pop(0)
+            val, pol = step(pos)
 
-        value[pos[1]][pos[0]] = val
-        policy[pos[1]][pos[0]] = pol
-
-    print value
-    print policy
-
+            value[pos[1]][pos[0]] = val
+            policy[pos[1]][pos[0]] = pol
 
     return value, policy
 
