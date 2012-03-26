@@ -143,6 +143,20 @@ class robot:
         # Add code here
         #
         #
+
+        if self.x < radius:
+            cte = -(radius-sqrt((self.x-radius)**2+(self.y-radius/2)**2))
+        elif self.x < 3*radius:
+            if self.orientation > pi/2 and self.orientation < 3*(pi/2):
+                # facing left
+                cte = -self.y
+            else:
+                cte = -(radius-self.y)
+        else:
+            cte = radius-sqrt((self.x-3*radius)**2+(self.y-radius/2)**2)
+
+#        print cte
+
         return cte
 
 ############## ONLY ADD / MODIFY CODE ABOVE THIS LINE ####################
