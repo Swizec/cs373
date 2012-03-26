@@ -58,17 +58,36 @@ path=[[0, 0],
 
 def smooth(path, weight_data = 0.1, weight_smooth = 0.1, tolerance = 0.00001):
 
-    #
-    # Enter code here
-    #
+    newpath = [[0 for col in range(len(path[0]))] for row in range(len(path))]
+    for i in range(len(path)):
+        for j in range(len(path[0])):
+            newpath[i][j] = path[i][j]
+
+
+    #### ENTER CODE BELOW THIS LINE ###
+    while 1:
+        diff = 0
+
+        for i in xrange(len(newpath)):
+            for j in xrange(len(newpath[i])):
+                d = newpath[i][j]
+                newpath[i][j] += weight_data*(path[i][j]-newpath[i][j])
+                newpath[i][j] += weight_smooth*(newpath[(i+1)%len(newpath)][j]+\
+                                                    newpath[i-1][j]-\
+                                                    2*newpath[i][j])
+                diff += newpath[i][j]-d
+
+        if abs(diff) <= tolerance:
+            break
 
     return newpath
 
 # thank you - EnTerr - for posting this on our discussion forum
 
 #newpath = smooth(path)
-#for i in range(len(path)):
-#    print '['+ ', '.join('%.3f'%x for x in path[i]) +'] -> ['+ ', '.join('%.3f'%x for x in newpath[i]) +']'
+def output(path, newpath):
+    for i in range(len(path)):
+        print '['+ ', '.join('%.3f'%x for x in path[i]) +'] -> ['+ ', '.join('%.3f'%x for x in newpath[i]) +']'
 
 
 ##### TESTING ######
@@ -214,7 +233,7 @@ answer2 = [[1.239080543767428, 0.5047204351187283],
 ##    [0.000, 1.000] -> [0.505, 1.239]
 ##    [1.000, 1.000] -> [0.908, 0.908]
 
-# solution_check(smooth(testpath1), answer1)
+solution_check(smooth(testpath2), answer2)
 
 
 
