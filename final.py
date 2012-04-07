@@ -92,7 +92,47 @@ def plan(road, lane_change_cost, init, goal): # Don't change the name of this fu
     # Insert Code Here
     #
     #
-    return cost
+
+#    def output(road):
+#        for lane in road:
+#            print "[%s]" % ", ".join(["%.3f" % x for x in lane])
+    def output(road):
+        for i in range(len(road)):
+            print '['+ ', '.join('%.3f'%x for x in road[i]) +']'
+        print
+
+
+    def cost(y,x):
+        costs = []
+        if road[y][x] == 0:
+            return 10
+
+        if x > 0:
+            if y > 0:
+                costs.append(lane_change_cost+road[y-1][x-1])
+            costs.append(road[y][x-1])
+            if y < len(road)-1:
+                costs.append(lane_change_cost+road[y+1][x-1])
+
+        self_cost = 1.0/road[y][x] if [y,x] != goal else 0
+
+        try:
+            return min(costs)+self_cost
+        except ValueError:
+            return self_cost
+
+
+ #   output(road)
+    # mark unreachable
+    for y in xrange(init[0]-1, -1, -1):
+        road[y][init[1]] = 0
+
+    for x in xrange(init[1], goal[1]+1):
+        for y in xrange(init[0], -1, -1):
+            road[y][x] = cost(y,x)
+#            output(road)
+
+    return road[goal[0]][goal[1]]
 
 ################# TESTING ##################
 
@@ -164,7 +204,7 @@ testing_suite = [[test_road1, test_road2, test_road3, test_road4],
                  [test_goal1, test_goal2, test_goal3, test_goal4],
                  [true_cost1, true_cost2, true_cost3, true_cost4]]
 
-#solution_check(testing_suite) #UNCOMMENT THIS LINE TO TEST YOUR CODE
+solution_check(testing_suite) #UNCOMMENT THIS LINE TO TEST YOUR CODE
 
 
 
