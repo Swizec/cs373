@@ -93,9 +93,6 @@ def plan(road, lane_change_cost, init, goal): # Don't change the name of this fu
     #
     #
 
-#    def output(road):
-#        for lane in road:
-#            print "[%s]" % ", ".join(["%.3f" % x for x in lane])
     def output(road):
         for i in range(len(road)):
             print '['+ ', '.join('%.3f'%x for x in road[i]) +']'
@@ -121,8 +118,6 @@ def plan(road, lane_change_cost, init, goal): # Don't change the name of this fu
         except ValueError:
             return self_cost
 
-
- #   output(road)
     # mark unreachable
     for y in xrange(init[0]-1, -1, -1):
         road[y][init[1]] = 0
@@ -130,7 +125,6 @@ def plan(road, lane_change_cost, init, goal): # Don't change the name of this fu
     for x in xrange(init[1], goal[1]+1):
         for y in xrange(init[0], -1, -1):
             road[y][x] = cost(y,x)
-#            output(road)
 
     return road[goal[0]][goal[1]]
 
